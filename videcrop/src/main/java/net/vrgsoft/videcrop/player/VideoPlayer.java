@@ -4,10 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -36,16 +37,14 @@ import static com.google.android.exoplayer2.C.TIME_UNSET;
 
 public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListener, VideoListener {
     private SimpleExoPlayer player;
-    private OnProgressUpdateListener mUpdateListener;
+    private OnProgressUpdateListener mUpdateListener = new NullUpdateListener();
     private Handler progressHandler;
     private Runnable progressUpdater;
 
-    public VideoPlayer(Context context) {
+    public VideoPlayer(@NonNull Context context) {
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
+        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new DefaultLoadControl();
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, loadControl);
         player.setRepeatMode(Player.REPEAT_MODE_ONE);
@@ -58,7 +57,6 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(Uri.parse(uri),
                 dataSourceFactory, extractorsFactory, null, null);
-
         player.prepare(videoSource);
         player.addVideoListener(this);
     }
@@ -165,8 +163,8 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
         long position = player.getCurrentPosition();
         int playbackState = player.getPlaybackState();
         long delayMs;
-        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != ExoPlayer.STATE_ENDED) {
-            if (player.getPlayWhenReady() && playbackState == ExoPlayer.STATE_READY) {
+        if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
+            if (player.getPlayWhenReady() && playbackState == Player.STATE_READY) {
                 delayMs = 1000 - (position % 1000);
                 if (delayMs < 200) {
                     delayMs += 1000;
@@ -174,7 +172,6 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
             } else {
                 delayMs = 1000;
             }
-
             removeUpdater();
             progressUpdater = new Runnable() {
                 @Override
@@ -182,7 +179,6 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
                     updateProgress();
                 }
             };
-
             progressHandler.postDelayed(progressUpdater, delayMs);
         }
     }
@@ -196,7 +192,7 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
         player.seekTo(position);
     }
 
-    public void setUpdateListener(OnProgressUpdateListener updateListener) {
+    public void setUpdateListener(@NonNull OnProgressUpdateListener updateListener) {
         mUpdateListener = updateListener;
     }
 
@@ -216,5 +212,18 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
         void onProgressUpdate(long currentPosition, long duration, long bufferedPosition);
 
         void onFirstTimeUpdate(long duration, long currentPosition);
+    }
+
+    class NullUpdateListener implements OnProgressUpdateListener{
+
+        @Override
+        public void onProgressUpdate(long currentPosition, long duration, long bufferedPosition) {
+
+        }
+
+        @Override
+        public void onFirstTimeUpdate(long duration, long currentPosition) {
+
+        }
     }
 }
