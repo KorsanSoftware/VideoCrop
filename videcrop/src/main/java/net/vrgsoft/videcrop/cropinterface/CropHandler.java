@@ -1,10 +1,8 @@
 package net.vrgsoft.videcrop.cropinterface;
 
-import android.graphics.Rect;
-
 import androidx.annotation.NonNull;
 
 public interface CropHandler {
-    void handleCropOperation(CropParameters cropParameters);
+    void handleCropOperation(@NonNull final CropParameters cropParameters,@NonNull final CropHandlerCallback cropHandlerCallback);
     void dispose();
 }

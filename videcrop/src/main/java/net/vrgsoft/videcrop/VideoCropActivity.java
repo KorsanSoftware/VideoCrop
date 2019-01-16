@@ -78,6 +78,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     private String outputPath;
     private boolean isVideoPlaying = false;
     private boolean isAspectMenuShown = false;
+    private int frameRate;
 
     public static Intent createIntent(@NonNull Context context,
                                       @NonNull String inputPath,
@@ -314,7 +315,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         int videoHeight = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
         int rotationDegrees = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
+            frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
         }
         mCropVideoView.initBounds(videoWidth, videoHeight, rotationDegrees);
     }
@@ -346,14 +347,19 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
 
     @SuppressLint("DefaultLocale")
     private void handleCropStart() {
-        Rect cropRect = mCropVideoView.getCropRect();
-        long startCrop = mTmbProgress.getLeftProgress();
-        long durationCrop = mTmbProgress.getRightProgress() - mTmbProgress.getLeftProgress();
-        CropParameters parameters = new CropParameters(cropRect, startCrop, durationCrop, inputPath, outputPath,
-        new CropHandlerCallback() {
+        final Rect cropRect = mCropVideoView.getCropRect();
+        final long startCrop = mTmbProgress.getLeftProgress();
+        final long durationCrop = mTmbProgress.getRightProgress() - mTmbProgress.getLeftProgress();
+        CropParameters parameters = new CropParameters(cropRect, startCrop, durationCrop, inputPath, outputPath);
+        CropHandlerCallback callback = new CropHandlerCallback() {
             @Override
             public void onSuccess(String message) {
-                setResult(RESULT_OK);
+                Intent dataResultIntent = new Intent();
+                dataResultIntent.putExtra("cropRect",cropRect);
+                dataResultIntent.putExtra("startCrop",startCrop);
+                dataResultIntent.putExtra("durationCrop",durationCrop);
+                dataResultIntent.putExtra("frameRate",frameRate);
+                setResult(RESULT_OK,dataResultIntent);
                 finish();
             }
             @Override
@@ -387,8 +393,8 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 mTvCropProgress.setText("0%");
                 Toast.makeText(VideoCropActivity.this, "FINISHED", Toast.LENGTH_SHORT).show();
             }
-        });
-        mCropHandler.handleCropOperation(parameters);
+        };
+        mCropHandler.handleCropOperation(parameters,callback);
     }
 
     @Override

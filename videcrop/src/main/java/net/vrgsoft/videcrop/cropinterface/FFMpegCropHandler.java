@@ -31,7 +31,7 @@ public class FFMpegCropHandler implements CropHandler {
     }
 
     @Override
-    public void handleCropOperation(final CropParameters cropParameters) {
+    public void handleCropOperation(@NonNull final CropParameters cropParameters,@NonNull final CropHandlerCallback cropHandlerCallback) {
         String start = Util.getStringForTime(formatBuilder, formatter, cropParameters.getStartCrop());
         String duration = Util.getStringForTime(formatBuilder, formatter, cropParameters.getCropDuration());
         start += "." + cropParameters.getStartCrop() % 1000;
@@ -49,37 +49,35 @@ public class FFMpegCropHandler implements CropHandler {
             mFFTask = mFFMpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
                 @Override
                 public void onSuccess(String message) {
-                    cropParameters.getCropHandlerCallback().onSuccess(message);
-                    /*
-                    */
+                    cropHandlerCallback.onSuccess(message);
                 }
 
                 @Override
                 public void onProgress(String message) {
-                    cropParameters.getCropHandlerCallback().onProgress(message);
+                    cropHandlerCallback.onProgress(message);
                     Log.e("onProgress", message);
                 }
 
                 @Override
                 public void onFailure(String message) {
-                    cropParameters.getCropHandlerCallback().onFailure(message);
+                    cropHandlerCallback.onFailure(message);
                     //Toast.makeText(VideoCropActivity.this, "Failed to crop!", Toast.LENGTH_SHORT).show();
                     Log.e("onFailure", message);
                 }
 
                 @Override
                 public void onProgressPercent(float percent) {
-                    cropParameters.getCropHandlerCallback().onProgressPercent(percent);
+                    cropHandlerCallback.onProgressPercent(percent);
                 }
 
                 @Override
                 public void onStart() {
-                    cropParameters.getCropHandlerCallback().onStart();
+                    cropHandlerCallback.onStart();
                 }
 
                 @Override
                 public void onFinish() {
-                    cropParameters.getCropHandlerCallback().onFinish();
+                    cropHandlerCallback.onFinish();
                 }
             }, cropParameters.getCropDuration() * 1.0f / 1000);
         }

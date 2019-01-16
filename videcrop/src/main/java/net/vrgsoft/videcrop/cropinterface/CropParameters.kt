@@ -6,5 +6,4 @@ data class CropParameters(val cropRect: Rect,
                           val startCrop : Long,
                           val cropDuration : Long,
                           val inputPath:String,
-                          val outputPath:String,
-                          val cropHandlerCallback: CropHandlerCallback)
+                          val outputPath:String)
