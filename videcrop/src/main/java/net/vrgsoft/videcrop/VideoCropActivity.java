@@ -82,14 +82,20 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
 
     public static Intent createIntent(@NonNull Context context,
                                       @NonNull String inputPath,
+                                      @NonNull String outputPath) {
+        return createIntent(context, inputPath, outputPath, true, true);
+    }
+
+    public static Intent createIntent(@NonNull Context context,
+                                      @NonNull String inputPath,
                                       @NonNull String outputPath,
                                       boolean shouldAskPermission,
                                       boolean shouldUseFFMpeg) {
         Intent intent = new Intent(context, VideoCropActivity.class);
         intent.putExtra(VIDEO_CROP_INPUT_PATH, inputPath);
         intent.putExtra(VIDEO_CROP_OUTPUT_PATH, outputPath);
-        intent.putExtra(VIDEO_ASK_PERMISSION,shouldAskPermission);
-        intent.putExtra(VIDEO_USE_FFMPEG,shouldUseFFMpeg);
+        intent.putExtra(VIDEO_ASK_PERMISSION, shouldAskPermission);
+        intent.putExtra(VIDEO_USE_FFMPEG, shouldUseFFMpeg);
         return intent;
     }
 
@@ -104,11 +110,9 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         inputPath = getIntent().getStringExtra(VIDEO_CROP_INPUT_PATH);
         outputPath = getIntent().getStringExtra(VIDEO_CROP_OUTPUT_PATH);
 
-        if(getIntent().getBooleanExtra(VIDEO_USE_FFMPEG,true))
-        {
+        if (getIntent().getBooleanExtra(VIDEO_USE_FFMPEG, true)) {
             mCropHandler = new FFMpegCropHandler(this);
-        }
-        else{
+        } else {
             mCropHandler = new ValueDeliveringCropHandler();
         }
 
@@ -124,19 +128,17 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     }
 
     private void handleWritePermission() {
-        boolean videoAskPermission = getIntent().getBooleanExtra(VIDEO_ASK_PERMISSION,true);
-        if(videoAskPermission) {
+        boolean videoAskPermission = getIntent().getBooleanExtra(VIDEO_ASK_PERMISSION, true);
+        if (videoAskPermission) {
             requestStoragePermission();
-        }
-        else{
+        } else {
             initPlayer(inputPath);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        if(requestCode == STORAGE_REQUEST)
-        {
+        if (requestCode == STORAGE_REQUEST) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initPlayer(inputPath);
@@ -285,8 +287,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
             mTmbProgress.setSliceBlocked(false);
             mTmbProgress.removeVideoStatusThumb();
             mIvPlay.setImageResource(R.drawable.ic_play);
-        }
-        else{
+        } else {
             mVideoPlayer.seekTo(mTmbProgress.getLeftProgress());
             mVideoPlayer.play(!mVideoPlayer.isPlaying());
             mTmbProgress.videoPlayingProgress(mTmbProgress.getLeftProgress());
@@ -355,25 +356,29 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
             @Override
             public void onSuccess(String message) {
                 Intent dataResultIntent = new Intent();
-                dataResultIntent.putExtra("cropRect",cropRect);
-                dataResultIntent.putExtra("startCrop",startCrop);
-                dataResultIntent.putExtra("durationCrop",durationCrop);
-                dataResultIntent.putExtra("frameRate",frameRate);
-                setResult(RESULT_OK,dataResultIntent);
+                dataResultIntent.putExtra("cropRect", cropRect);
+                dataResultIntent.putExtra("startCrop", startCrop);
+                dataResultIntent.putExtra("durationCrop", durationCrop);
+                dataResultIntent.putExtra("frameRate", frameRate);
+                setResult(RESULT_OK, dataResultIntent);
                 finish();
             }
+
             @Override
             public void onProgress(String message) {
             }
+
             @Override
             public void onFailure(String message) {
                 Toast.makeText(VideoCropActivity.this, "Failed to crop!", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onProgressPercent(float percent) {
                 mProgressBar.setProgress((int) percent);
                 mTvCropProgress.setText((int) percent + "%");
             }
+
             @Override
             public void onStart() {
                 mIvDone.setEnabled(false);
@@ -383,6 +388,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 mTvCropProgress.setVisibility(View.VISIBLE);
                 mTvCropProgress.setText("0%");
             }
+
             @Override
             public void onFinish() {
                 mIvDone.setEnabled(true);
@@ -394,7 +400,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 Toast.makeText(VideoCropActivity.this, "FINISHED", Toast.LENGTH_SHORT).show();
             }
         };
-        mCropHandler.handleCropOperation(parameters,callback);
+        mCropHandler.handleCropOperation(parameters, callback);
     }
 
     @Override
