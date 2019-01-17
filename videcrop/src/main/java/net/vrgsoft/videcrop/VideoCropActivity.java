@@ -65,13 +65,24 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     private CropVideoView mCropVideoView;
     private TextView mTvProgress;
     private TextView mTvDuration;
+
     private TextView mTvAspectCustom;
     private TextView mTvAspectSquare;
     private TextView mTvAspectPortrait;
     private TextView mTvAspectLandscape;
     private TextView mTvAspect4by3;
     private TextView mTvAspect16by9;
+
+    private AppCompatImageView mIvAspectCustom;
+    private AppCompatImageView mIvAspectSquare;
+    private AppCompatImageView mIvAspectPortrait;
+    private AppCompatImageView mIvAspectLandscape;
+    private AppCompatImageView mIvAspect4by3;
+    private AppCompatImageView mIvAspect16by9;
+
     private TextView mTvCropProgress;
+
+
     private View mAspectMenu;
     private ProgressView mProgressBar;
 
@@ -216,6 +227,13 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         mTvAspect16by9 = findViewById(R.id.tvAspect16by9);
         mProgressBar = findViewById(R.id.pbCropProgress);
         mTvCropProgress = findViewById(R.id.tvCropProgress);
+
+        mIvAspect4by3 = findViewById(R.id.iv4by3);
+        mIvAspect16by9 = findViewById(R.id.iv16by9);
+        mIvAspectCustom = findViewById(R.id.ivCustom);
+        mIvAspectLandscape = findViewById(R.id.ivAspectLandscape);
+        mIvAspectPortrait = findViewById(R.id.ivAspectPortrait);
+        mIvAspectSquare = findViewById(R.id.ivSquare);
     }
 
     private void handleEnforceOrientationCropping(int width,int height)
@@ -226,8 +244,17 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         if(shouldOrientationEnforced)
         {
             mTvAspectCustom.setVisibility(View.GONE);
+            mIvAspectCustom.setVisibility(View.GONE);
             if(height > width)
             {
+                mIvAspect4by3.setVisibility(View.GONE);
+                mIvAspect16by9.setVisibility(View.GONE);
+                mIvAspectLandscape.setVisibility(View.GONE);
+                mIvAspectPortrait.setVisibility(View.GONE);
+
+                mIvAspectSquare.setVisibility(View.VISIBLE);
+                mTvAspectSquare.setVisibility(View.VISIBLE);
+
                 //portrait
                 mTvAspectPortrait.setVisibility(View.GONE);
                 mTvAspectLandscape.setVisibility(View.GONE);
@@ -237,6 +264,9 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
             else if(width > height)
             {
                 //landscape
+                mIvAspectSquare.setVisibility(View.GONE);
+                mIvAspectPortrait.setVisibility(View.GONE);
+
                 mTvAspectPortrait.setVisibility(View.GONE);
                 mTvAspectSquare.setVisibility(View.GONE);
             }
@@ -252,6 +282,13 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         mTvAspectCustom.setVisibility(View.VISIBLE);
         mTvAspectPortrait.setVisibility(View.VISIBLE);
         mTvAspectSquare.setVisibility(View.VISIBLE);
+
+        mIvAspect4by3.setVisibility(View.VISIBLE);
+        mIvAspect16by9.setVisibility(View.VISIBLE);
+        mIvAspectCustom.setVisibility(View.VISIBLE);
+        mIvAspectLandscape.setVisibility(View.VISIBLE);
+        mIvAspectPortrait.setVisibility(View.VISIBLE);
+        mIvAspectSquare.setVisibility(View.VISIBLE);
     }
 
     private void initListeners() {
@@ -419,7 +456,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
             @Override
             public void onProgressPercent(float percent) {
                 mProgressBar.setProgress((int) percent);
-                mTvCropProgress.setText((int) percent + "%");
+                mTvCropProgress.setText(String.format("%d%%", (int) percent));
             }
 
             @Override
