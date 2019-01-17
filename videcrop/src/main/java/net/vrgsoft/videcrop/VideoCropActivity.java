@@ -78,7 +78,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     private String outputPath;
     private boolean isVideoPlaying = false;
     private boolean isAspectMenuShown = false;
-    private int frameRate;
+    private int frameRate=0;
 
     public static Intent createIntent(@NonNull Context context,
                                       @NonNull String inputPath,
@@ -316,7 +316,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         int videoHeight = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
         int rotationDegrees = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
+            //frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
         }
         mCropVideoView.initBounds(videoWidth, videoHeight, rotationDegrees);
     }
