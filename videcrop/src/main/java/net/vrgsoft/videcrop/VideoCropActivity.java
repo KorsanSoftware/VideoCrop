@@ -225,6 +225,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 handleMenuVisibility();
             }
         });
+        mTvAspectCustom.setVisibility(View.GONE);
         mTvAspectCustom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
