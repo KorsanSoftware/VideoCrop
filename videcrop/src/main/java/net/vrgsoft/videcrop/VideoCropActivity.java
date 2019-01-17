@@ -237,8 +237,14 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         mIvAspectSquare = findViewById(R.id.ivSquare);
     }
 
-    private void handleEnforceOrientationCropping(int width,int height)
+    private void handleEnforceOrientationCropping(int width,int height,int rotation)
     {
+        if(rotation == 90 || rotation == 270)
+        {
+            width ^= height;
+            height ^= width;
+            width ^= height;
+        }
         resetViews();
         boolean shouldOrientationEnforced =
                 getIntent().getBooleanExtra(VIDEO_ENFORCE_ORIENTATION_CROP,false);
@@ -398,7 +404,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
         }
-        handleEnforceOrientationCropping(videoWidth,videoHeight);
+        handleEnforceOrientationCropping(videoWidth,videoHeight,rotationDegrees);
         mCropVideoView.initBounds(videoWidth, videoHeight, rotationDegrees);
     }
 
