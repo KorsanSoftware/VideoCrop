@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -73,12 +74,12 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     private TextView mTvAspect4by3;
     private TextView mTvAspect16by9;
 
-    private AppCompatImageView mIvAspectCustom;
-    private AppCompatImageView mIvAspectSquare;
-    private AppCompatImageView mIvAspectPortrait;
-    private AppCompatImageView mIvAspectLandscape;
-    private AppCompatImageView mIvAspect4by3;
-    private AppCompatImageView mIvAspect16by9;
+    private AppCompatImageButton mIvAspectCustom;
+    private AppCompatImageButton mIvAspectSquare;
+    private AppCompatImageButton mIvAspectPortrait;
+    private AppCompatImageButton mIvAspectLandscape;
+    private AppCompatImageButton mIvAspect4by3;
+    private AppCompatImageButton mIvAspect16by9;
 
     private TextView mTvCropProgress;
 
