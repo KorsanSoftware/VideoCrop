@@ -22,5 +22,4 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation project(":videcrop")
-    implementation 'com.github.KorsanSoftware:VideoCrop:upgrade_overall_supportlibs-SNAPSHOT'
 }
