@@ -48,6 +48,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     private static final String VIDEO_CROP_OUTPUT_PATH = "VIDEO_CROP_OUTPUT_PATH";
     private static final String VIDEO_ASK_PERMISSION = "VIDEO_ASK_PERMISSION";
     private static final String VIDEO_USE_FFMPEG = "VIDEO_USE_FFMPEG";
+    private static final String VIDEO_ENFORCE_ORIENTATION_CROP = "VIDEO_ENFORCE_ORIENTATION_CROP";
 
     private static final int STORAGE_REQUEST = 100;
 
@@ -83,19 +84,24 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
     public static Intent createIntent(@NonNull Context context,
                                       @NonNull String inputPath,
                                       @NonNull String outputPath) {
-        return createIntent(context, inputPath, outputPath, true, true);
+        return createIntent(context, inputPath, outputPath,
+                true,
+                true,
+                false);
     }
 
     public static Intent createIntent(@NonNull Context context,
                                       @NonNull String inputPath,
                                       @NonNull String outputPath,
                                       boolean shouldAskPermission,
-                                      boolean shouldUseFFMpeg) {
+                                      boolean shouldUseFFMpeg,
+                                      boolean enforceOrientationCrop) {
         Intent intent = new Intent(context, VideoCropActivity.class);
         intent.putExtra(VIDEO_CROP_INPUT_PATH, inputPath);
         intent.putExtra(VIDEO_CROP_OUTPUT_PATH, outputPath);
         intent.putExtra(VIDEO_ASK_PERMISSION, shouldAskPermission);
         intent.putExtra(VIDEO_USE_FFMPEG, shouldUseFFMpeg);
+        intent.putExtra(VIDEO_ENFORCE_ORIENTATION_CROP,enforceOrientationCrop);
         return intent;
     }
 
@@ -212,6 +218,42 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         mTvCropProgress = findViewById(R.id.tvCropProgress);
     }
 
+    private void handleEnforceOrientationCropping(int width,int height)
+    {
+        resetViews();
+        boolean shouldOrientationEnforced =
+                getIntent().getBooleanExtra(VIDEO_ENFORCE_ORIENTATION_CROP,false);
+        if(shouldOrientationEnforced)
+        {
+            mTvAspectCustom.setVisibility(View.GONE);
+            if(height > width)
+            {
+                //portrait
+                mTvAspectPortrait.setVisibility(View.GONE);
+                mTvAspectLandscape.setVisibility(View.GONE);
+                mTvAspect4by3.setVisibility(View.GONE);
+                mTvAspect16by9.setVisibility(View.GONE);
+            }
+            else if(width > height)
+            {
+                //landscape
+                mTvAspectPortrait.setVisibility(View.GONE);
+                mTvAspectSquare.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void resetViews()
+    {
+        mTvAspectPortrait.setVisibility(View.VISIBLE);
+        mTvAspectLandscape.setVisibility(View.VISIBLE);
+        mTvAspect4by3.setVisibility(View.VISIBLE);
+        mTvAspect16by9.setVisibility(View.VISIBLE);
+        mTvAspectCustom.setVisibility(View.VISIBLE);
+        mTvAspectPortrait.setVisibility(View.VISIBLE);
+        mTvAspectSquare.setVisibility(View.VISIBLE);
+    }
+
     private void initListeners() {
         mIvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,7 +267,6 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 handleMenuVisibility();
             }
         });
-        mTvAspectCustom.setVisibility(View.GONE);
         mTvAspectCustom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,6 +360,7 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //frameRate = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CAPTURE_FRAMERATE));
         }
+        handleEnforceOrientationCropping(videoWidth,videoHeight);
         mCropVideoView.initBounds(videoWidth, videoHeight, rotationDegrees);
     }
 
