@@ -267,6 +267,8 @@ public class VideoCropActivity extends AppCompatActivity implements VideoPlayer.
                 mTvAspectLandscape.setVisibility(View.GONE);
                 mTvAspect4by3.setVisibility(View.GONE);
                 mTvAspect16by9.setVisibility(View.GONE);
+                mCropVideoView.setFixedAspectRatio(true);
+                mCropVideoView.setAspectRatio(10, 10);
             }
             else if(width > height)
             {
