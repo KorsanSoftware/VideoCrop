@@ -46,7 +46,7 @@ public class VideoPlayer implements Player.EventListener, TimeBar.OnScrubListene
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new DefaultLoadControl();
-        player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, loadControl);
+        player = ExoPlayerFactory.newSimpleInstance(context,new DefaultRenderersFactory(context), trackSelector, loadControl);
         player.setRepeatMode(Player.REPEAT_MODE_ONE);
         player.addListener(this);
         progressHandler = new Handler();
